@@ -71,6 +71,25 @@ struct MC_TASKS_DLLAPI StabilizerTask : public MetaTask
     std::string surfaceName;
   };
 
+  // /**
+  //  * @brief Creates a stabilizer meta task
+  //  *
+  //  * @param robots Robots on which the task acts
+  //  * @param realRobots Corresponding real robot instances
+  //  * @param robotIndex Index of the robot to stabilize
+  //  * @param leftSurface Left foot surface name. Its origin should be the center of the foot sole
+  //  * @param rightSurface Left foot surface name. Its origin should be the center of the foot sole
+  //  * @param torsoBodyName Body name of the robot's torso (i.e a link above the
+  //  * floating base)
+  //  * @param dt Controller's timestep
+  //  */
+  // StabilizerTask(const mc_rbdyn::Robots & robots,
+  //                const mc_rbdyn::Robots & realRobots,
+  //                unsigned int robotIndex,
+  //                const std::string & leftSurface,
+  //                const std::string & rightSurface,
+  //                const std::string & torsoBodyName,
+  //                double dt);
   /**
    * @brief Creates a stabilizer meta task
    *
@@ -79,6 +98,8 @@ struct MC_TASKS_DLLAPI StabilizerTask : public MetaTask
    * @param robotIndex Index of the robot to stabilize
    * @param leftSurface Left foot surface name. Its origin should be the center of the foot sole
    * @param rightSurface Left foot surface name. Its origin should be the center of the foot sole
+   * @param leftToeSurface Left Toe surface name. Its origin should be the center of the toe part
+   * @param rightToeSurface Right Toe surface name. Its origin should be the center of the toe part
    * @param torsoBodyName Body name of the robot's torso (i.e a link above the
    * floating base)
    * @param dt Controller's timestep
@@ -88,6 +109,8 @@ struct MC_TASKS_DLLAPI StabilizerTask : public MetaTask
                  unsigned int robotIndex,
                  const std::string & leftSurface,
                  const std::string & rightSurface,
+                 const std::string & leftToeSurface,
+                 const std::string & rightToeSurface,
                  const std::string & torsoBodyName,
                  double dt);
 
@@ -862,6 +885,7 @@ protected:
                      Eigen::aligned_allocator<std::pair<const ContactState, internal::Contact>>>
       contacts_;
   std::vector<ContactState> addContacts_; /**< Contacts to add to the QPSolver when the task is inserted */
+  std::unordered_map<ContactState, std::shared_ptr<mc_tasks::force::CoPTask>, EnumClassHash> footNToeTasks;
   std::unordered_map<ContactState, std::shared_ptr<mc_tasks::force::CoPTask>, EnumClassHash> footTasks;
   std::vector<std::shared_ptr<mc_tasks::force::CoPTask>> contactTasks; /** Foot tasks for the established contacts */
   std::vector<std::string> contactSensors; /** Force sensors corresponding to established contacts */

@@ -444,6 +444,8 @@ struct MC_RBDYN_DLLAPI StabilizerConfiguration
   double friction = 0.7; /**< Friction coefficient. Same for both feet */
   std::string leftFootSurface; /**< Surface name for the left foot. Origin should be at foot's center */
   std::string rightFootSurface; /**< Surface name for the right foot. Origin should be at foot's center */
+  std::string leftToeSurface; /**< Surface name for the left foot. Origin should be at foot's center */
+  std::string rightToeSurface; /**< Surface name for the right foot. Origin should be at foot's center */
 
   bool constrainCoP = true; /**<If true, the wrench computation constraint the CoP of each contact to be inside the foot
                                support rectangle. */

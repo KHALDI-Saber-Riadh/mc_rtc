@@ -31,6 +31,8 @@ StabilizerTask::StabilizerTask(const mc_rbdyn::Robots & robots,
                                unsigned int robotIndex,
                                const std::string & leftSurface,
                                const std::string & rightSurface,
+                               const std::string & leftToeSurface,
+                               const std::string & rightToeSurface,
                                const std::string & torsoBodyName,
                                double dt)
 : robots_(robots), realRobots_(realRobots), robotIndex_(robotIndex), dcmEstimator_(dt),
@@ -47,8 +49,14 @@ StabilizerTask::StabilizerTask(const mc_rbdyn::Robots & robots,
                                                                 leftSurface, robots, robotIndex_);
   auto rightCoP = std::allocate_shared<mc_tasks::force::CoPTask>(Eigen::aligned_allocator<mc_tasks::force::CoPTask>{},
                                                                  rightSurface, robots, robotIndex_);
+  auto leftToeCoP = std::allocate_shared<mc_tasks::force::CoPTask>(Eigen::aligned_allocator<mc_tasks::force::CoPTask>{},
+                                                                leftToeSurface, robots, robotIndex_);
+  auto rightToeCoP = std::allocate_shared<mc_tasks::force::CoPTask>(Eigen::aligned_allocator<mc_tasks::force::CoPTask>{},
+                                                                 rightToeSurface, robots, robotIndex_);                                                                 
   footTasks[ContactState::Left] = leftCoP;
   footTasks[ContactState::Right] = rightCoP;
+  footTasks[ContactState::LeftToe] = leftToeCoP;
+  footTasks[ContactState::RightToe] = rightToeCoP;
 
   std::string pelvisBodyName = robot().mb().body(0).name();
   pelvisTask = std::make_shared<mc_tasks::OrientationTask>(pelvisBodyName, robots_, robotIndex_);
@@ -67,6 +75,8 @@ StabilizerTask::StabilizerTask(const mc_rbdyn::Robots & robots,
                  robotIndex,
                  robots.robot(robotIndex).module().defaultLIPMStabilizerConfiguration().leftFootSurface,
                  robots.robot(robotIndex).module().defaultLIPMStabilizerConfiguration().rightFootSurface,
+                 robots.robot(robotIndex).module().defaultLIPMStabilizerConfiguration().leftToeSurface,
+                 robots.robot(robotIndex).module().defaultLIPMStabilizerConfiguration().rightToeSurface,
                  robots.robot(robotIndex).module().defaultLIPMStabilizerConfiguration().torsoBodyName,
                  dt)
 {
@@ -1599,7 +1609,7 @@ static auto registered = mc_tasks::MetaTaskLoader::register_load_function(
 
       auto t = std::allocate_shared<mc_tasks::lipm_stabilizer::StabilizerTask>(
           Eigen::aligned_allocator<mc_tasks::lipm_stabilizer::StabilizerTask>{}, solver.robots(), solver.realRobots(),
-          robotIndex, stabiConf.leftFootSurface, stabiConf.rightFootSurface, stabiConf.torsoBodyName, solver.dt());
+          robotIndex, stabiConf.leftFootSurface, stabiConf.rightFootSurface,stabiConf.leftToeSurface, stabiConf.rightToeSurface, stabiConf.torsoBodyName, solver.dt());
       t->configure(stabiConf);
       t->load(solver, config);
       t->reset();

@@ -31,7 +31,9 @@ using HrepXd = std::pair<Eigen::MatrixXd, Eigen::VectorXd>;
 enum class MC_TASKS_DLLAPI ContactState
 {
   Left,
-  Right
+  Right,
+  LeftToe,
+  RightToe
 };
 
 namespace internal
@@ -213,7 +215,9 @@ struct ConfigurationLoader<mc_tasks::lipm_stabilizer::ContactState>
     const std::string & s = config;
     if(s == "Left") { return ContactState::Left; }
     else if(s == "Right") { return ContactState::Right; }
-    else { mc_rtc::log::error_and_throw("ContactState should be one of [Left, Right], {} requested.", s); }
+    else if(s == "LeftToe") { return ContactState::LeftToe; }
+    else if(s == "RightToe") { return ContactState::RightToe; }
+    else { mc_rtc::log::error_and_throw("ContactState should be one of [Left, Right, LeftToe, RightToe], {} requested.", s); }
   }
 
   static mc_rtc::Configuration save(const mc_tasks::lipm_stabilizer::ContactState & contact)
@@ -227,6 +231,12 @@ struct ConfigurationLoader<mc_tasks::lipm_stabilizer::ContactState>
         break;
       case ContactState::Right:
         config = "Right";
+        break;
+      case ContactState::LeftToe:
+        config = "LeftToe";
+        break;
+      case ContactState::RightToe:
+        config = "RightToe";
         break;
     }
     return config;

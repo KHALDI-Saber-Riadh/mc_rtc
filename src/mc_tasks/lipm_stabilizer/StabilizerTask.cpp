@@ -456,6 +456,12 @@ void StabilizerTask::setContacts(const std::vector<ContactState> & contacts)
   ContactDescriptionVector addContacts;
   for(const auto contact : contacts)
   {
+    mc_rtc::log::info("Here I come");
+    if(footTasks.find(contact) == footTasks.end())
+    {
+      mc_rtc::log::error("Contact {} not found in footTasks!", contact);
+      throw std::runtime_error("Invalid contact in setContacts");
+    }
     addContacts.push_back({contact,
                            {robot(), footTasks[contact]->surface(),
                             realRobot().surfacePose(footTasks[contact]->surface()), c_.friction}});
@@ -468,6 +474,12 @@ void StabilizerTask::setContacts(const std::vector<std::pair<ContactState, sva::
   ContactDescriptionVector addContacts;
   for(const auto & contact : contacts)
   {
+    mc_rtc::log::info("Here I come");
+    if(footTasks.find(contact) == footTasks.end())
+    {
+      mc_rtc::log::error("Contact {} not found in footTasks!", contact);
+      throw std::runtime_error("Invalid contact in setContacts");
+    }
     addContacts.push_back({contact.first, {robot(), footTasks[contact.first]->surface(), contact.second, c_.friction}});
   }
   setContacts(addContacts);
